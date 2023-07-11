@@ -14,6 +14,12 @@
 		"aspectRatio": {
 			"type": "string"
 		},
+		"caption": {
+			"type": "string",
+			"source": "html",
+			"selector": "figcaption",
+			"__experimentalRole": "content"
+		},
 		"width": {
 			"type": "string"
 		},
