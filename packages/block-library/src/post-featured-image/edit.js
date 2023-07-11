@@ -219,6 +219,19 @@ export default function PostFeaturedImageEdit( {
 						</>
 					) }
 				</PanelBody>
+				<PanelBody title={ __( 'Caption Toggle' ) }>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Show Caption' ) }
+						onChange={ () => {
+							setShowCaption( ! showCaption );
+							if ( showCaption && caption ) {
+								setAttributes( { caption: undefined } );
+							}
+						} }
+						checked={ showCaption }
+					/>
+				</PanelBody>
 			</InspectorControls>
 		</>
 	);
