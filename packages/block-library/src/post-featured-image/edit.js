@@ -15,7 +15,9 @@ import {
 	Placeholder,
 	Button,
 	TextControl,
+	ToolbarButton,
 } from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 import {
 	InspectorControls,
 	BlockControls,
@@ -25,8 +27,9 @@ import {
 	store as blockEditorStore,
 	__experimentalUseBorderProps as useBorderProps,
 } from '@wordpress/block-editor';
+import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { upload } from '@wordpress/icons';
+import { upload, caption as captionIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 
 /**
@@ -47,12 +50,15 @@ export default function PostFeaturedImageEdit( {
 	clientId,
 	attributes,
 	setAttributes,
+	isSelected,
+	blockEditingMode,
 	context: { postId, postType: postTypeSlug, queryId },
 } ) {
 	const isDescendentOfQueryLoop = Number.isFinite( queryId );
 	const {
 		isLink,
 		aspectRatio,
+		caption,
 		height,
 		width,
 		scale,
@@ -66,6 +72,8 @@ export default function PostFeaturedImageEdit( {
 		'featured_media',
 		postId
 	);
+	const prevCaption = usePrevious( caption );
+	const [ showCaption, setShowCaption ] = useState( !! caption );
 
 	const { media, postType } = useSelect(
 		( select ) => {
@@ -100,7 +108,14 @@ export default function PostFeaturedImageEdit( {
 		style: { width, height, aspectRatio },
 	} );
 	const borderProps = useBorderProps( attributes );
-
+	// We need to show the caption when changes come from
+	// history navigation(undo/redo).
+	useEffect( () => {
+		if ( caption && ! prevCaption ) {
+			setShowCaption( true );
+		}
+	}, [ caption, prevCaption ] );
+	const hasNonContentControls = blockEditingMode === 'default';
 	const placeholder = ( content ) => {
 		return (
 			<Placeholder
@@ -131,8 +146,34 @@ export default function PostFeaturedImageEdit( {
 		createErrorNotice( message, { type: 'snackbar' } );
 	};
 
+	useEffect( () => {
+		if ( ! isSelected ) {
+			if ( ! caption ) {
+				setShowCaption( false );
+			}
+		}
+	}, [ isSelected, caption ] );
 	const controls = (
 		<>
+			<BlockControls group="block">
+				{ hasNonContentControls && (
+					<ToolbarButton
+						onClick={ () => {
+							setShowCaption( ! showCaption );
+							if ( showCaption && caption ) {
+								setAttributes( { caption: undefined } );
+							}
+						} }
+						icon={ captionIcon }
+						isPressed={ showCaption }
+						label={
+							showCaption
+								? __( 'Remove caption' )
+								: __( 'Add caption' )
+						}
+					/>
+				) }
+			</BlockControls>
 			<DimensionControls
 				clientId={ clientId }
 				attributes={ attributes }
