@@ -19,6 +19,15 @@
 	&.alignfull img {
 		width: 100%;
 		display: table;
+	}
+
+	&.alignleft,
+	&.alignright,
+	&.aligncenter,
+	.alignleft,
+	.alignright,
+	.aligncenter {
+		display: table;
 
 		> figcaption {
 			display: table-caption;
