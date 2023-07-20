@@ -226,7 +226,7 @@ export default function PostFeaturedImageEdit( {
 						onChange={ () => {
 							setShowCaption( ! showCaption );
 							if ( showCaption && caption ) {
-								setAttributes( { caption: undefined } );
+								setAttributes( { caption: 'Hello' } );
 							}
 						} }
 						checked={ showCaption }
