@@ -26,8 +26,11 @@ import {
 	useBlockProps,
 	store as blockEditorStore,
 	__experimentalUseBorderProps as useBorderProps,
+	__experimentalGetElementClassName,
+	RichText,
 } from '@wordpress/block-editor';
-import { useEffect, useState } from '@wordpress/element';
+import { createBlock, getDefaultBlockName } from '@wordpress/blocks';
+import { useEffect, useState, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { upload, caption as captionIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -47,6 +50,7 @@ function getMediaSourceUrlBySizeSlug( media, slug ) {
 }
 
 export default function PostFeaturedImageEdit( {
+	insertBlocksAfter,
 	clientId,
 	attributes,
 	setAttributes,
@@ -115,6 +119,15 @@ export default function PostFeaturedImageEdit( {
 			setShowCaption( true );
 		}
 	}, [ caption, prevCaption ] );
+	const captionRef = useCallback(
+		( node ) => {
+			if ( node && ! caption ) {
+				node.focus();
+			}
+		},
+		[ caption ]
+	);
+
 	const hasNonContentControls = blockEditingMode === 'default';
 	const placeholder = ( content ) => {
 		return (
@@ -355,6 +368,29 @@ export default function PostFeaturedImageEdit( {
 					setAttributes={ setAttributes }
 					clientId={ clientId }
 				/>
+				{ showCaption &&
+					( ! RichText.isEmpty( caption ) || isSelected ) && (
+						<RichText
+							identifier="caption"
+							className={ __experimentalGetElementClassName(
+								'caption'
+							) }
+							ref={ captionRef }
+							tagName="figcaption"
+							aria-label={ __( 'Image caption text' ) }
+							placeholder={ __( 'Add caption' ) }
+							//value={caption}
+							//onChange={(value) =>
+							//setAttributes({ caption: value })
+							//}
+							inlineToolbar
+							__unstableOnSplitAtEnd={ () =>
+								insertBlocksAfter(
+									createBlock( getDefaultBlockName() )
+								)
+							}
+						/>
+					) }
 			</figure>
 		</>
 	);
