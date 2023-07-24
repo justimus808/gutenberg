@@ -60,6 +60,13 @@ function render_block_core_post_featured_image( $attributes, $content, $block ) 
 	}
 
 	$featured_image = get_the_post_thumbnail( $post_ID, $size_slug, $attr );
+	if(is_single()){
+		$caption = get_the_post_thumbnail_caption($post_ID);
+	}
+	else{
+		$caption = '';
+	}
+	
 	if ( ! $featured_image ) {
 		return '';
 	}
@@ -94,7 +101,7 @@ function render_block_core_post_featured_image( $attributes, $content, $block ) 
 	} else {
 		$wrapper_attributes = get_block_wrapper_attributes( array( 'style' => $aspect_ratio . $width . $height ) );
 	}
-	return "<figure {$wrapper_attributes}>{$featured_image}</figure>";
+	return "<figure {$wrapper_attributes}>{$featured_image} <figcaption class='block-editor-rich-text__editable wp-element-caption rich-text' style='white-space: pre-wrap; min-width: 1px;'>{$caption}</figcaption></figure>";
 }
 
 /**
