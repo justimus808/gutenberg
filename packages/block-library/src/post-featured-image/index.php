@@ -24,7 +24,7 @@ function render_block_core_post_featured_image( $attributes, $content, $block ) 
 	if ( ! in_the_loop() && have_posts() ) {
 		the_post();
 	}
-
+	$showCaption    = isset( $attributes['caption'] ) && $attributes['caption'];
 	$is_link        = isset( $attributes['isLink'] ) && $attributes['isLink'];
 	$size_slug      = isset( $attributes['sizeSlug'] ) ? $attributes['sizeSlug'] : 'post-thumbnail';
 	$attr           = get_block_core_post_featured_image_border_attributes( $attributes );
@@ -60,7 +60,7 @@ function render_block_core_post_featured_image( $attributes, $content, $block ) 
 	}
 
 	$featured_image = get_the_post_thumbnail( $post_ID, $size_slug, $attr );
-	if(is_single()){
+	if($showCaption){
 		$caption = get_the_post_thumbnail_caption($post_ID);
 	}
 	else{

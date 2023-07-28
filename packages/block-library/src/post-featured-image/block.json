@@ -15,10 +15,8 @@
 			"type": "string"
 		},
 		"caption": {
-			"type": "string",
-			"source": "html",
-			"selector": "figcaption",
-			"__experimentalRole": "content"
+			"type": "boolean",
+			"default": false
 		},
 		"width": {
 			"type": "string"
